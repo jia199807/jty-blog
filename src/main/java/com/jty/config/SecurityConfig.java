@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity// 开启网络安全注解
@@ -55,7 +56,7 @@ public class SecurityConfig {
                 .cors();
         // http.addFilterBefore(jsonLoginFilter(), UsernamePasswordAuthenticationFilter.class);
         // 把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中
-        // http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
