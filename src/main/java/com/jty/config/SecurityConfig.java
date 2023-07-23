@@ -2,10 +2,8 @@ package com.jty.config;
 
 import com.jty.filter.JwtAuthenticationTokenFilter;
 import com.jty.service.impl.UserDetailsServiceImpl;
-import com.jty.utils.RedisCache;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -27,11 +27,14 @@ public class SecurityConfig {
     @Resource
     UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
+    @Resource
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     @Resource
-    private RedisCache redisCache;
+    private AuthenticationEntryPoint authenticationEntryPoint;
+
+    @Resource
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,9 +57,20 @@ public class SecurityConfig {
         http
                 // 允许跨域
                 .cors();
+
         // http.addFilterBefore(jsonLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+
         // 把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中
-        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // 配置异常处理器
+        http
+                .exceptionHandling()
+                // 认证失败处理器
+                .authenticationEntryPoint(authenticationEntryPoint)
+                // 授权失败处理器
+                .accessDeniedHandler(accessDeniedHandler);
         return http.build();
     }
 
