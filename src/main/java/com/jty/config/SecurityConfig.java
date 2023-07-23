@@ -1,11 +1,12 @@
 package com.jty.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson2.JSON;
 import com.jty.domain.entity.LoginUser;
 import com.jty.domain.entity.User;
 import com.jty.domain.entity.vo.BlogUserLoginVo;
 import com.jty.domain.entity.vo.UserInfoVo;
 import com.jty.filter.JsonLoginFilter;
+import com.jty.filter.JwtAuthenticationTokenFilter;
 import com.jty.response.ResponseResult;
 import com.jty.service.impl.UserDetailsServiceImpl;
 import com.jty.utils.BeanCopyUtils;
@@ -13,6 +14,7 @@ import com.jty.utils.JwtUtil;
 import com.jty.utils.RedisCache;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,15 +30,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
 
 @Configuration
 @EnableWebSecurity// 开启网络安全注解
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     @Resource
     UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     @Resource
     private RedisCache redisCache;
@@ -62,12 +66,14 @@ public class SecurityConfiguration {
                 .anonymous()
                 // 除上面外的所有请求全部需要认证可访问
                 .anyRequest()
-                .permitAll();
+                .authenticated();
 
         http
                 // 允许跨域
                 .cors();
         http.addFilterBefore(jsonLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+        // 把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -99,10 +105,10 @@ public class SecurityConfiguration {
             User user = loginUser.getUser();
             String userId = loginUser.getUser().getId().toString();
 
-            String jwtToken = JwtUtil.buildToken(new HashMap<>(), userId);
+            String jwtToken = JwtUtil.createJWT(userId);
 
             // 把用户信息存入redis
-            redisCache.setCacheObject("blog:" + userId, loginUser);
+            redisCache.setCacheObject("bloglogin:" + userId, loginUser);
 
             // 把User转换成UserInfoVo
             UserInfoVo userInfoVo = BeanCopyUtils.copyBean(user, UserInfoVo.class);
@@ -111,7 +117,7 @@ public class SecurityConfiguration {
             BlogUserLoginVo blogUserLoginVo = new BlogUserLoginVo(jwtToken, userInfoVo);
             ResponseResult result = ResponseResult.okResult(blogUserLoginVo);
 
-            out.write(new ObjectMapper().writeValueAsString(result));
+            out.write(JSON.toJSONString(result));
 
             // //获取当前登录成功的用户对象
             // User user = (User) auth.getPrincipal();
@@ -136,9 +142,10 @@ public class SecurityConfiguration {
             // } else if (e instanceof LockedException) {
             //     result.setMsg("账户被锁定，登录失败");
             // }
-            out.write(new ObjectMapper().writeValueAsString(result));
+            out.write(JSON.toJSONString(result));
         });
         filter.setAuthenticationManager(authenticationManager());
+
         filter.setFilterProcessesUrl("/login");
         filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
         return filter;
