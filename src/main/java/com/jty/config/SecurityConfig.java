@@ -71,6 +71,11 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authenticationEntryPoint)
                 // 授权失败处理器
                 .accessDeniedHandler(accessDeniedHandler);
+
+        // 关闭默认的注销功能
+        http
+                .logout()
+                .disable();
         return http.build();
     }
 
