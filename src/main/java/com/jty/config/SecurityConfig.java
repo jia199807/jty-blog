@@ -48,17 +48,16 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 // 对于登录接口 允许匿名访问
-                .requestMatchers("/login")
-                .anonymous()
-                // 除上面外的所有请求全部需要认证可访问
-                .anyRequest()
-                .authenticated();
-
+                .requestMatchers("/login").anonymous()
+                // 注销接口需要认证才能访问
+                .requestMatchers("/logout").authenticated()
+                // 个人信息接口必须登录后才能访问
+                .requestMatchers("/user/userInfo").authenticated()
+                // 除上面外的所有请求全部不需要认证即可访问
+                .anyRequest().permitAll();
+        // 允许跨域
         http
-                // 允许跨域
                 .cors();
-
-        // http.addFilterBefore(jsonLoginFilter(), UsernamePasswordAuthenticationFilter.class);
 
         // 把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中
         http
@@ -74,8 +73,8 @@ public class SecurityConfig {
 
         // 关闭默认的注销功能
         http
-                .logout()
-                .disable();
+                .logout().disable();
+
         return http.build();
     }
 
