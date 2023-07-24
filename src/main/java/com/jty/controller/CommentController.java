@@ -4,6 +4,7 @@ package com.jty.controller;
 import com.jty.domain.entity.Comment;
 import com.jty.response.ResponseResult;
 import com.jty.service.CommentService;
+import com.jty.system.SystemConstants;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +23,18 @@ public class CommentController {
 
     @GetMapping("/commentList")
     public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
-        return commentService.commentList(articleId, pageNum, pageSize);
+        return commentService.commentList(SystemConstants.ARTICLE_COMMENT, articleId, pageNum, pageSize);
     }
 
     @PostMapping()
     public ResponseResult addComment(@RequestBody Comment comment) {
         return commentService.addComment(comment);
+    }
+
+
+    @GetMapping("/linkCommentList")
+    public ResponseResult linkCommentList(Integer pageNum, Integer pageSize) {
+        return commentService.commentList(SystemConstants.LINK_COMMENT, null, pageNum, pageSize);
     }
 
 
