@@ -29,5 +29,11 @@ spring:
         logic-delete-value: 1
         logic-not-delete-value: 0
         id-type: auto
+oss:
+  accessKey: "ZoZtjrL-z-i5KukZQinQIdzmGigosjkFM98OOWS3"
+  secretKey: "32ax_bbsvV9eqvckrr9Fk9cRYf5CMfu04DjkGANk"
+  bucket: "jty-blog"
+  domain: "http://rvsco2odf.hn-bkt.clouddn.com/"
+
 
 
