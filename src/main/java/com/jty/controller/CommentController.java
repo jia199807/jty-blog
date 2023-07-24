@@ -1,12 +1,11 @@
 package com.jty.controller;
 
 
+import com.jty.domain.entity.Comment;
 import com.jty.response.ResponseResult;
 import com.jty.service.CommentService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 评论表(Comment)表控制层
@@ -25,5 +24,12 @@ public class CommentController {
     public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
         return commentService.commentList(articleId, pageNum, pageSize);
     }
+
+    @PostMapping()
+    public ResponseResult addComment(@RequestBody Comment comment) {
+        return commentService.addComment(comment);
+    }
+
+
 }
 
