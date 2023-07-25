@@ -1,5 +1,6 @@
 package com.jty.controller;
 
+import com.jty.annotation.SystemLog;
 import com.jty.response.ResponseResult;
 import com.jty.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ public class UploadController {
     private UploadService uploadService;
 
     @PostMapping("/upload")
+    @SystemLog(businessName = "上传头像")
     public ResponseResult uploadImg(MultipartFile img) {
         return uploadService.uploadImg(img);
     }

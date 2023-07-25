@@ -1,5 +1,6 @@
 package com.jty.controller;
 
+import com.jty.annotation.SystemLog;
 import com.jty.response.ResponseResult;
 import com.jty.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/getCategoryList")
+    @SystemLog(businessName = "分类列表")
     public ResponseResult getCategoryList(){
        return categoryService.getCategoryList();
     }

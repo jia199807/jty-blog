@@ -1,6 +1,7 @@
 package com.jty.controller;
 
 
+import com.jty.annotation.SystemLog;
 import com.jty.domain.entity.Article;
 import com.jty.response.ResponseResult;
 import com.jty.service.ArticleService;
@@ -27,11 +28,13 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping("/list")
+    @SystemLog(businessName = "文章列表")
     public List<Article> test(){
         return articleService.list();
     }
 
     @GetMapping("/hotArticleList")
+    @SystemLog(businessName = "展示热门文章列表")
     public ResponseResult hotArticleList(){
 
         ResponseResult result =  articleService.hotArticleList();
@@ -39,11 +42,13 @@ public class ArticleController {
     }
 
     @GetMapping("/articleList")
+    @SystemLog(businessName = "展示文章列表（分页）")
     public ResponseResult articleList(Integer pageNum,Integer pageSize,Long categoryId){
         return articleService.articleList(pageNum,pageSize,categoryId);
     }
 
     @GetMapping("/{id}")
+    @SystemLog(businessName = "获取用户详情")
     public ResponseResult getArticleDetail(@PathVariable("id") Long id){
         return articleService.getArticleDetail(id);
     }
