@@ -2,7 +2,7 @@ package com.jty.controller;
 
 
 import com.jty.annotation.SystemLog;
-import com.jty.domain.entity.Article;
+import com.jty.entity.Article;
 import com.jty.response.ResponseResult;
 import com.jty.service.ArticleService;
 import lombok.RequiredArgsConstructor;

@@ -1,14 +1,17 @@
 package com.jty.controller;
 
 import com.jty.annotation.SystemLog;
-import com.jty.domain.entity.User;
 import com.jty.response.ResponseResult;
 import com.jty.service.BlogLoginService;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 public class BlogLoginController {
@@ -17,8 +20,11 @@ public class BlogLoginController {
 
     @PostMapping("/login")
     @SystemLog(businessName = "登录")
-    public ResponseResult login(@RequestBody User user, HttpSession session) {
-        return blogLoginService.login(user, session);
+    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/api/v1/auth/authenticate");
+        requestDispatcher.forward(request, response);
+        // return blogLoginService.login(user, session);
     }
 
     @PostMapping("/logout")

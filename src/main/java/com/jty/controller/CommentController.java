@@ -2,7 +2,7 @@ package com.jty.controller;
 
 
 import com.jty.annotation.SystemLog;
-import com.jty.domain.entity.Comment;
+import com.jty.entity.Comment;
 import com.jty.response.ResponseResult;
 import com.jty.service.CommentService;
 import com.jty.system.SystemConstants;

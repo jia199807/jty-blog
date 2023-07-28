@@ -35,5 +35,22 @@ oss:
   bucket: "jty-blog"
   domain: "http://rvsco2odf.hn-bkt.clouddn.com/"
 
+application:
+  security:
+    jwt:
+      secret-key: VUhJT0pJT0hVWUlHRFVGVFdPSVJISVVHWUZHVkRVR0RISVVIREJZI1VJSEZTVUdZR0ZTVVk=
+      expiration: 86400000 # 1天
+      refresh-token:
+        expiration: 604800000 # 7 天
+
+
+springdoc:
+  swagger-ui:
+    path: /docs.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
 
 
